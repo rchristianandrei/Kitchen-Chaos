@@ -5,6 +5,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float movementSpeed = 10f;
 
+    [SerializeField]
+    private float rotationSpeed = 10f;
+
     private void Update()
     {
         this.PlayerMovement();
@@ -33,6 +36,7 @@ public class Player : MonoBehaviour
 
         input = input.normalized;
         Vector3 moveDir = new(input.x, 0, input.y);
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, this.rotationSpeed * Time.deltaTime);
         transform.position += this.movementSpeed * Time.deltaTime * moveDir;
     }
 }
