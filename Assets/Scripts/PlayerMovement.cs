@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [SerializeField]
     private float movementSpeed = 10f;
@@ -8,12 +8,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     private float rotationSpeed = 10f;
 
+    public bool IsWalking { get; private set; }
+
     private void Update()
     {
-        this.PlayerMovement();
+        this.Movement();
     }
 
-    private void PlayerMovement()
+    private void Movement()
     {
         Vector2 input = new();
 
@@ -36,6 +38,9 @@ public class Player : MonoBehaviour
 
         input = input.normalized;
         Vector3 moveDir = new(input.x, 0, input.y);
+
+        this.IsWalking = moveDir != Vector3.zero;
+
         transform.forward = Vector3.Slerp(transform.forward, moveDir, this.rotationSpeed * Time.deltaTime);
         transform.position += this.movementSpeed * Time.deltaTime * moveDir;
     }
