@@ -15,7 +15,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private LayerMask countersLayerMask;
 
+
     private Vector3 lastInteractDir;
+    private ClearCounter clearCounter;
 
     public bool IsWalking { get; private set; }
 
@@ -26,34 +28,42 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        this.Interact();
+        if(this.clearCounter != null ) this.clearCounter.Interact();
     }
 
     private void Update()
     {
-        this.FindLastInteractDirection();
+        this.FindClearCounter();
         this.Movement();
         this.Rotation();
     }
 
-    private void FindLastInteractDirection()
+    private void FindClearCounter()
     {
         Vector2 input = this.gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new(input.x, 0, input.y);
-
+         
         if (moveDir != Vector3.zero) this.lastInteractDir = moveDir;
-    }
 
-    private void Interact()
-    {
         float interactDistance = 2f;
-        if(Physics.Raycast(transform.position, this.lastInteractDir, out RaycastHit hitInfo, interactDistance, this.countersLayerMask))
+        if (!Physics.Raycast(transform.position, this.lastInteractDir, out RaycastHit hitInfo, interactDistance, this.countersLayerMask))
         {
-            if(hitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
-            {
-                clearCounter.Interact();
-            }
+            if (this.clearCounter != null) this.clearCounter.Select(false);
+            this.clearCounter = null;
+            return;
         }
+
+        // Check if counter
+        if (!hitInfo.transform.TryGetComponent(out ClearCounter clearCounter)) return;
+
+        // Check if need to change selected counter
+        if (this.clearCounter == clearCounter) return;
+
+        // Uncheck if previously selected is not null
+        if (this.clearCounter != null) this.clearCounter.Select(false);
+
+        this.clearCounter = clearCounter;
+        this.clearCounter.Select(true);
     }
 
     private void Movement()
@@ -92,8 +102,9 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if(canMove)
-            transform.position += moveDistance * moveDir;
+        if (!canMove) return;
+
+        transform.position += moveDistance * moveDir;
     }
 
     private void Rotation()
