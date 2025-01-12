@@ -19,20 +19,33 @@ public class PlayerMovement : MonoBehaviour
 
     public bool IsWalking { get; private set; }
 
-    private void Update()
+    private void Start()
+    {
+        this.gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
         this.Interact();
+    }
+
+    private void Update()
+    {
+        this.FindLastInteractDirection();
         this.Movement();
         this.Rotation();
     }
 
-    private void Interact()
+    private void FindLastInteractDirection()
     {
         Vector2 input = this.gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new(input.x, 0, input.y);
 
-        if(moveDir != Vector3.zero) this.lastInteractDir = moveDir;
+        if (moveDir != Vector3.zero) this.lastInteractDir = moveDir;
+    }
 
+    private void Interact()
+    {
         float interactDistance = 2f;
         if(Physics.Raycast(transform.position, this.lastInteractDir, out RaycastHit hitInfo, interactDistance, this.countersLayerMask))
         {
