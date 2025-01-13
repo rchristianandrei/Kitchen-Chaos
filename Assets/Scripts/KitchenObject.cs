@@ -40,4 +40,27 @@ public class KitchenObject : MonoBehaviour
         transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
         transform.SetLocalPositionAndRotation(Vector3.zero, kitchenObjectParent.GetKitchenObjectFollowTransform().rotation);
     }
+
+    public void DestroySelf()
+    {
+        currentKitchenObjectParent.ClearKitchenObject();
+
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// Creates a new instacne of kitchen object and assigns it to the kitchen object parent.
+    /// </summary>
+    /// <param name="kitchenObjectSO">The kitchen object blueprint to spawn.</param>
+    /// <param name="parent">The owner or holder of kitchen object.</param>
+    /// <returns>The newly created kitchen object.</returns>
+    public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent parent)
+    {
+        var spawned = Instantiate(kitchenObjectSO.prefab);
+
+        var kitchenObject = spawned.GetComponent<KitchenObject>();
+        kitchenObject.SetKitchenObjectParent(parent);
+
+        return kitchenObject;
+    }
 }

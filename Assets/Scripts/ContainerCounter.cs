@@ -30,10 +30,15 @@ public class ContainerCounter : BaseCounter
             else
             {
                 // Create new kitchen object
-                var spawnedKitchenObject = Instantiate(kitchenObjectSO.prefab);
-                spawnedKitchenObject.GetComponent<KitchenObject>().SetKitchenObjectParent(player);
+                KitchenObject.SpawnKitchenObject(kitchenObjectSO, player);
                 OnOpenContainer?.Invoke(this, EventArgs.Empty);
             }
         }
+    }
+
+
+    public override void InteractAlternate(Player player)
+    {
+        
     }
 }
