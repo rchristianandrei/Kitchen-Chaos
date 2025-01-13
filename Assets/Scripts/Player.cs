@@ -1,8 +1,10 @@
 using System;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
+    public bool IsWalking { get; private set; }
+
     [SerializeField]
     private float movementSpeed = 10f;
 
@@ -15,11 +17,38 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     private LayerMask countersLayerMask;
 
-
     private Vector3 lastInteractDir;
     private ClearCounter clearCounter;
 
-    public bool IsWalking { get; private set; }
+    #region "IKitchenObjectParent"
+    [SerializeField] Transform heldKitchenObjectPoint;
+    private KitchenObject kitchenObject;
+
+    public Transform GetKitchenObjectFollowTransform()
+    {
+        return heldKitchenObjectPoint;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
+    }
+    #endregion
 
     private void Start()
     {
@@ -28,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        if(this.clearCounter != null ) this.clearCounter.Interact();
+        if(this.clearCounter != null ) this.clearCounter.Interact(this);
     }
 
     private void Update()

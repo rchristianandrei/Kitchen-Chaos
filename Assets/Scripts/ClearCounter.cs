@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter : MonoBehaviour
+public class ClearCounter : MonoBehaviour, IKitchenObjectParent
 {
     [SerializeField] private SelectedCounterVisual selectedCounterVisual;
 
@@ -11,16 +11,16 @@ public class ClearCounter : MonoBehaviour
 
     private KitchenObject kitchenObject;
 
-    public void Interact()
+    public void Interact(IKitchenObjectParent kitchenObjectParent)
     {
         if (kitchenObject != null)
         {
-            Debug.Log(kitchenObject.GetClearCounter());
+            this.kitchenObject.SetKitchenObjectParent(kitchenObjectParent);
             return;
         }
 
         var spawnedKitchenObject = Instantiate(kitchenObjectSO.prefab, counterTopPoint.position, counterTopPoint.rotation, counterTopPoint);
-        spawnedKitchenObject.GetComponent<KitchenObject>().SetClearCounter(this);
+        spawnedKitchenObject.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
     }
 
     public void Select(bool selected)
