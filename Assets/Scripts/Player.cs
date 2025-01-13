@@ -3,6 +3,14 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IKitchenObjectParent
 {
+    public static Player Instance;
+
+    public event EventHandler<CounterEventArgs> OnCounterChanged;
+    public class CounterEventArgs 
+    { 
+        public BaseCounter counter { get; set; }
+    }
+
     public bool IsWalking { get; private set; }
 
     [SerializeField]
@@ -18,7 +26,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private LayerMask countersLayerMask;
 
     private Vector3 lastInteractDir;
-    private ClearCounter clearCounter;
+    private BaseCounter currentCounter;
 
     #region "IKitchenObjectParent"
     [SerializeField] Transform heldKitchenObjectPoint;
@@ -50,6 +58,17 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
     #endregion
 
+    private void Awake()
+    {
+        if(Instance != null)
+        {
+            Debug.LogError("There should only be one player!");
+            return;
+        }
+
+        Instance = this;
+    }
+
     private void Start()
     {
         this.gameInput.OnInteractAction += GameInput_OnInteractAction;
@@ -57,17 +76,17 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
     {
-        if(this.clearCounter != null ) this.clearCounter.Interact(this);
+        if(this.currentCounter != null ) this.currentCounter.Interact(this);
     }
 
     private void Update()
     {
-        this.FindClearCounter();
+        this.FindICounter();
         this.Movement();
         this.Rotation();
     }
 
-    private void FindClearCounter()
+    private void FindICounter()
     {
         Vector2 input = this.gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new(input.x, 0, input.y);
@@ -77,22 +96,29 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         float interactDistance = 2f;
         if (!Physics.Raycast(transform.position, this.lastInteractDir, out RaycastHit hitInfo, interactDistance, this.countersLayerMask))
         {
-            if (this.clearCounter != null) this.clearCounter.Select(false);
-            this.clearCounter = null;
+            if (this.currentCounter != null) this.RaiseOnCounterChanged(null);
+            this.currentCounter = null;
             return;
         }
 
         // Check if counter
-        if (!hitInfo.transform.TryGetComponent(out ClearCounter clearCounter)) return;
+        if (!hitInfo.transform.TryGetComponent(out BaseCounter clearCounter)) return;
 
         // Check if need to change selected counter
-        if (this.clearCounter == clearCounter) return;
+        if (this.currentCounter == clearCounter) return;
 
         // Uncheck if previously selected is not null
-        if (this.clearCounter != null) this.clearCounter.Select(false);
+        if (this.currentCounter != null) this.RaiseOnCounterChanged(null);
 
-        this.clearCounter = clearCounter;
-        this.clearCounter.Select(true);
+        this.currentCounter = clearCounter;
+        this.RaiseOnCounterChanged(clearCounter);
+    }
+
+    private void RaiseOnCounterChanged(BaseCounter e)
+    {
+        if(OnCounterChanged == null) return;
+
+        OnCounterChanged.Invoke(this, new CounterEventArgs { counter = e});
     }
 
     private void Movement()
