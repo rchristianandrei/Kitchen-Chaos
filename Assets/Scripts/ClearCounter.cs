@@ -6,9 +6,14 @@ public class ClearCounter : MonoBehaviour
 {
     [SerializeField] private SelectedCounterVisual selectedCounterVisual;
 
+    [SerializeField] private Transform counterTopPoint;
+    [SerializeField] private KitchenObjectSO kitchenObjectSO;
+
     public void Interact()
     {
-        Debug.Log("interact");
+        var spawnedKitchenObject = Instantiate(kitchenObjectSO.prefab, counterTopPoint.position, counterTopPoint.rotation, counterTopPoint);
+
+        Debug.Log(spawnedKitchenObject.GetComponent<KitchenObject>().GetKitchenObjectSO().objectName);
     }
 
     public void Select(bool selected)
