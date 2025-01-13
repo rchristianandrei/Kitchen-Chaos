@@ -8,13 +8,17 @@ public class ClearCounter : BaseCounter
 
     public override void Interact(Player player)
     {
-        if (base.HasKitchenObject())
+        // Get kitchen object
+        if (player.HasKitchenObject() && !base.HasKitchenObject())
         {
-            base.GetKitchenObject().SetKitchenObjectParent(player);
+            player.GetKitchenObject().SetKitchenObjectParent(this);
             return;
         }
 
-        var spawnedKitchenObject = Instantiate(kitchenObjectSO.prefab);
-        spawnedKitchenObject.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
+        // Give kitchen object
+        if (!player.HasKitchenObject() && base.HasKitchenObject()) { 
+            base.GetKitchenObject().SetKitchenObjectParent(player);
+            return;
+        }
     }
 }
