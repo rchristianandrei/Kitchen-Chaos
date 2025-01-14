@@ -10,6 +10,7 @@ public class SelectedCounterVisual : MonoBehaviour
     private void Start()
     {
         Player.Instance.OnCounterChanged += Instance_OnCounterChanged;
+        counterSelectVisual.SetActive(false);
     }
 
     private void Instance_OnCounterChanged(object sender, Player.CounterEventArgs e)
