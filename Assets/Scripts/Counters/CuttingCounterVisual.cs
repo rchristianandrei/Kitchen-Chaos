@@ -17,7 +17,7 @@ public class CuttingCounterVisual : MonoBehaviour
     private void Start()
     {
         cuttingCounter = transform.parent.GetComponent<CuttingCounter>();
-        cuttingCounter.CuttingCounterChanged += CuttingCounter_CuttingCounterChanged;
+        cuttingCounter.OnProgressChanged += CuttingCounter_CuttingCounterChanged;
     }
 
     private void CuttingCounter_CuttingCounterChanged(object sender, float e)

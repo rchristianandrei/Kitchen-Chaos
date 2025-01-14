@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter
+public class CuttingCounter : BaseCounter, IHasProgress
 {
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
 
-    public event EventHandler<float> CuttingCounterChanged;
+    public event EventHandler<float> OnProgressChanged;
 
     private int cuttingProgress;
 
@@ -64,6 +65,6 @@ public class CuttingCounter : BaseCounter
 
     private void InvokeCuttingChangedEvent(float progress)
     {
-        CuttingCounterChanged?.Invoke(this, progress);
+        OnProgressChanged?.Invoke(this, progress);
     }
 }
