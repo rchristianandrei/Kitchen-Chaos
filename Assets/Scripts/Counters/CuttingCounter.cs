@@ -16,11 +16,16 @@ public class CuttingCounter : BaseCounter, IHasProgress
     {
         if (base.HasKitchenObject())
         {
-            if (!player.HasKitchenObject())
+            if (player.HasKitchenObject())
+            {
+                PlateKitchenObject.TryAddingIngredientToPlate(player, this);
+            }
+            else
             {
                 // Give kitchen object to player
                 base.GetKitchenObject().SetKitchenObjectParent(player);
                 this.InvokeCuttingChangedEvent(0f);
+
             }
         }
         else

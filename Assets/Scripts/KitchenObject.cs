@@ -48,6 +48,20 @@ public class KitchenObject : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public bool TryGetPlate(out PlateKitchenObject plateKitchenObject)
+    {
+        if (this is PlateKitchenObject self)
+        {
+            plateKitchenObject = self;
+            return true;
+        }
+        else
+        {
+            plateKitchenObject = null;
+            return false;
+        }
+    }
+
     /// <summary>
     /// Creates a new instacne of kitchen object and assigns it to the kitchen object parent.
     /// </summary>

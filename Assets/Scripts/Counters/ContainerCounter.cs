@@ -14,10 +14,15 @@ public class ContainerCounter : BaseCounter
     {
         if (base.HasKitchenObject())
         {
-            if (!player.HasKitchenObject())
+            if (player.HasKitchenObject())
+            {
+                PlateKitchenObject.TryAddingIngredientToPlate(player, this);
+            }
+            else
             {
                 // Give kitchen object
                 base.GetKitchenObject().SetKitchenObjectParent(player);
+
             }
         }
         else
