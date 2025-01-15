@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,10 @@ using UnityEngine;
 public class DeliveryManager : MonoBehaviour
 {
     public static DeliveryManager Instance { get; private set; }
+
+    public event EventHandler OnRecipeSpawned;
+
+    public event EventHandler OnRecipeCompleted;
 
     [SerializeField] private RecipeListSO recipeListSO;
 
@@ -34,10 +39,10 @@ public class DeliveryManager : MonoBehaviour
             spawnRecipeTimer = spawnRecipeTimerMax;
 
             // Spawn an oder.
-            var recipeSO = recipeListSO.recipeSOList[Random.Range(0, recipeListSO.recipeSOList.Count)];
+            var recipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
             waitingRecipeSOList.Add(recipeSO);
 
-            Debug.Log(recipeSO.name);
+            OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -61,16 +66,26 @@ public class DeliveryManager : MonoBehaviour
                 break;
             }
 
-            if (found) foundRecipeSOIndex = i;
+            if (!found) continue;
+
+            foundRecipeSOIndex = i;
+            break;
         }
 
         if (found) {
             waitingRecipeSOList.RemoveAt(foundRecipeSOIndex);
+            OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
+
             return true;
         }
         else
         {
             return false;
         }
+    }
+
+    public List<RecipeSO> GetRecipeSOList()
+    {
+        return waitingRecipeSOList;
     }
 }
