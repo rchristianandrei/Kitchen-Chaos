@@ -8,8 +8,10 @@ public class DeliveryManager : MonoBehaviour
     public static DeliveryManager Instance { get; private set; }
 
     public event EventHandler OnRecipeSpawned;
-
     public event EventHandler OnRecipeCompleted;
+
+    public event EventHandler OnRecipeSuccess;
+    public event EventHandler OnRecipeFailed;
 
     [SerializeField] private RecipeListSO recipeListSO;
 
@@ -75,11 +77,12 @@ public class DeliveryManager : MonoBehaviour
         if (found) {
             waitingRecipeSOList.RemoveAt(foundRecipeSOIndex);
             OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
-
+            OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
             return true;
         }
         else
         {
+            OnRecipeFailed?.Invoke(this, EventArgs.Empty);
             return false;
         }
     }

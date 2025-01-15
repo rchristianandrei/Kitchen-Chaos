@@ -31,6 +31,7 @@ public class ContainerCounter : BaseCounter
             {
                 // Put down kitchen object
                 player.GetKitchenObject().SetKitchenObjectParent(this);
+                RaiseOnAnyObjectPlacedEvent();
             }
             else
             {

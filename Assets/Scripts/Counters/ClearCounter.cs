@@ -27,6 +27,7 @@ public class ClearCounter : BaseCounter
             {
                 // Get kitchen object
                 player.GetKitchenObject().SetKitchenObjectParent(this);
+                RaiseOnAnyObjectPlacedEvent();
                 return;
             }
             else
