@@ -11,7 +11,7 @@ public class DeliveryCounter : BaseCounter
         if (!player.GetKitchenObject().TryGetPlate(out var plate)) return;
 
         // Validate if this is plate is part of the order
-        var valid = true;
+        var valid = DeliveryManager.Instance.TryDeliverRecipe(plate);
 
         if (!valid) return;
 
