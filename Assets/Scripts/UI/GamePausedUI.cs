@@ -39,10 +39,13 @@ public class GamePausedUI : MonoBehaviour
     private void OptionsUI_OnOptionsClosed(object sender, System.EventArgs e)
     {
         gameObject.SetActive(true);
+        resumeButton.Select();
     }
 
     private void KitchenGameManager_OnTogglePause(object sender, KitchenGameManager.OnTogglePauseEventArgs e)
     {
         gameObject.SetActive(e.isPaused);
+
+        if(e.isPaused) resumeButton.Select();
     }
 }
